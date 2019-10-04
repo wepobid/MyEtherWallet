@@ -27,6 +27,9 @@
           >
             Invalid address given.
           </span>
+          <span v-show="alreadyExists">
+            NFT token already present
+          </span>
           <span v-show="nonStandardMessage">
             NFT token contract doesn't include a required method to add as a
             custom NFT or you do not have
@@ -78,6 +81,10 @@ export default {
     activeAddress: {
       type: String,
       default: ''
+    },
+    nftConfig: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -86,7 +93,9 @@ export default {
       tokenSymbol: '',
       tokenDecimal: '',
       validAddress: false,
-      nonStandardMessage: false
+      nonStandardMessage: false,
+      alreadyExists: false,
+      knownContracts: []
     };
   },
   computed: {
@@ -109,6 +118,9 @@ export default {
     },
     tokenSymbol(newVal) {
       this.tokenSymbol = newVal;
+    },
+    nftConfig(newVal) {
+      this.knownContracts = newVal.map(entry => entry.contract.toLowerCase());
     }
   },
   methods: {
@@ -118,8 +130,14 @@ export default {
       this.tokenDecimal = '';
       this.validAddress = false;
       this.nonStandardMessage = false;
+      this.alreadyExists = false;
     },
     async addCustom(address, symbol) {
+      const known = this.knownContracts.includes(address);
+      if (known) {
+        this.alreadyExists = true;
+        return;
+      }
       const result = await this.checkIfStandard(address);
       if (result) this.addToken(address, symbol);
       else {

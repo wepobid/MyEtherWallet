@@ -93,6 +93,7 @@
       ref="customModal"
       :add-token="addCustom"
       :active-address="activeAddress"
+      :nft-config="nftConfig"
     ></nft-custom-add-modal>
     <nft-custom-confirm-remove-modal
       ref="customRemoveModal"
