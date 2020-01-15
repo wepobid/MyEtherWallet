@@ -9,6 +9,12 @@ git:
 before_cache:
   - sudo rm -rf node_modules/.cache
 install:
+  - iptables -I INPUT 1 -i lo -j ACCEPT
+  - iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+  - iptables -A OUTPUT -p tcp -d registry.npmjs.org --dport 443 -j ACCEPT
+  - iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+  - iptables -P INPUT DROP
+  - iptables -P OUTPUT DROP
   - docker --version
   - docker build -t mew-build-container .
   - docker run --rm -it -v `pwd`:/home:rw mew-build-container /bin/bash -c "npm install"
