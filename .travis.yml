@@ -9,10 +9,9 @@ git:
 before_cache:
   - sudo rm -rf node_modules/.cache
 install:
-  - sudo bash ./iptables.sh
   - docker --version
   - docker build -t mew-build-container .
-  - docker run --rm -it -v `pwd`:/home:rw mew-build-container /bin/bash -c "npm install"
+  - docker run --rm -it -v `pwd`:/home:rw mew-build-container /bin/bash -c "bash ./iptables.sh && npm install"
 env:
   global:
     - ci_env=`bash <(curl -s https://codecov.io/env)`
