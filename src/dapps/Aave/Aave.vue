@@ -88,9 +88,10 @@ import { mapState } from 'vuex';
 import BigNumber from 'bignumber.js';
 import * as unit from 'ethjs-unit';
 import { Toast } from '@/helpers';
-
+import {formatUserSummaryData } from '@aave/protocol-js';
+import axios from 'axios';
 import graphql from './graphql'
-import {computeUserSummaryData} from './helpers'
+import { getApolloClient } from './apollo.js';
 
 export default {
   components: {
@@ -118,7 +119,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['web3', 'account']),
+    ...mapState('main', ['web3', 'account']),
     actionTitle() {
       if (!this.actionType) {
         return this.activeDepositTab
@@ -146,15 +147,15 @@ export default {
     }
   },
   async mounted() {
-    // ========= summary stuff start ==================
     const res1 = await graphql.useUserPositionUpdateSubscriptionSubscription(this.account.address);
     const res2 = await graphql.useReserveUpdateSubscriptionSubscription();
     const res3 = await graphql.getEthUsdPrice();
-    console.log(res1); // todo remove dev item
-    console.log(res2); // todo remove dev item
-    console.log(res3); // todo remove dev item
-    const summary = computeUserSummaryData(res2, res1, "abc", res3, Date.now());
-    console.log(summary); // todo remove dev item
+    // console.log(res1); // todo remove dev item
+    // console.log(res2); // todo remove dev item
+    // console.log(res3); // todo remove dev item
+    // const summary = computeUserSummaryData(res2, res1, "abc", res3, Date.now());
+    // console.log(summary); // todo remove dev item
+    // const summary = formatUserSummaryData(res2, res1, "abc", res3, Date.now()) 
     // ========= summary stuff end ==================
     this.lendingPoolContractAddress =
       '0x24a42fD28C976A61Df5D00D0599C34c4f90748c8';
@@ -172,10 +173,13 @@ export default {
 
     this.getUserInfo();
     this.getReserves();
-
+    this.callApollo();
   },
   methods: {
-
+    callApollo() {
+      const apollo = new getApolloClient()
+      console.error('summary', apollo)
+    },
     async getUserInfo() {
       try {
         const info = await this.lendingPoolContract.methods
@@ -186,7 +190,7 @@ export default {
         )
           .toFixed(2)
           .toString();
-        console.error('info', this.healthFactor)
+        console.error('info', info)
         this.aggregatedEthBalance = new BigNumber(
           unit.fromWei(info.totalLiquidityETH, 'ether')
         )
