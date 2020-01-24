@@ -1,12 +1,68 @@
 @import '~@/scss/GlobalVariables';
 
+.add-wallet-content-container {
+  min-width: 350px;
+  text-align: center;
+}
+
+.no-wallet-text {
+  color: $light-grey-10;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.divider {
+  position: relative;
+
+  .divider-text {
+    color: $light-grey-10;
+    background-color: $light-grey-2;
+    position: relative;
+    font-weight: 500;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: inline;
+    z-index: 2;
+  }
+
+  .divider-line {
+    position: absolute;
+    border-top: 1px solid $light-grey-6;
+    width: 100%;
+    left: 0;
+    top: 10px;
+    z-index: 1;
+  }
+}
+
+.add-button {
+  position: relative;
+  .plus {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto 0;
+    left: -15px;
+    font-size: 20px;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid white;
+    border-radius: 100%;
+  }
+}
+
+// ====================================================================================
+
 .add-wallet-container {
   align-items: center;
   background-color: $light-grey-2;
   //background-color: #989898;
   display: flex;
   flex-flow: column;
-  padding: 100px 20px;
+  padding: 150px 20px;
 
   h2 {
     margin: 0 0 10px 0;

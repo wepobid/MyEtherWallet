@@ -54,21 +54,52 @@
       @accountPath="updateSelectedPath"
       @passwordUpdated="updatePassword"
     />
-    <h2>{{ $t('mewcx.add-my-wallet') }}</h2>
-    <p>{{ $t('mewcx.how-would-you-add-wallet') }}</p>
-    <div class="add-wallet-options">
-      <access-wallet-button
-        v-for="(button, index) in options"
-        :key="button.title + index"
-        :func="button.func"
-        :img="button.icon"
-        :title="$t(button.title)"
-        :recommend="$t(button.warning)"
-        :disabled="false"
-        :classname="'extension-selection'"
-        :img-padding="button.imgPadding"
-        :desc="$t(button.desc)"
-      />
+    <div class="add-wallet-content-container">
+      <div class="no-wallet mb-4">
+        <img src="@/assets/images/message.png" />
+        <div class="mt-4 no-wallet-text">No wallet found, please...</div>
+      </div>
+
+      <div>
+        <standard-slot-button :options="addWalletButton">
+          <div class="add-button">
+            <div class="plus">+</div>
+            <div>Add My Wallet</div>
+          </div>
+        </standard-slot-button>
+      </div>
+
+      <div class="my-5 divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">OR</div>
+      </div>
+
+      <div>
+        <standard-slot-button :options="addWatchOnlyAddressButton">
+          <div class="add-button">
+            <div class="plus">+</div>
+            <div>Add a Watch Only Address</div>
+          </div>
+        </standard-slot-button>
+      </div>
+    </div>
+    <div v-if="false">
+      <h2>{{ $t('mewcx.add-my-wallet') }}</h2>
+      <p>{{ $t('mewcx.how-would-you-add-wallet') }}</p>
+      <div class="add-wallet-options">
+        <access-wallet-button
+          v-for="(button, index) in options"
+          :key="button.title + index"
+          :func="button.func"
+          :img="button.icon"
+          :title="$t(button.title)"
+          :recommend="$t(button.warning)"
+          :disabled="false"
+          :classname="'extension-selection'"
+          :img-padding="button.imgPadding"
+          :desc="$t(button.desc)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -99,6 +130,8 @@ import ImportMnemonicModal from '../../components/ImportMnemonicModal';
 import NetworkAndAddressModal from '../../components/NetworkAndAddressModal';
 
 import { isAddress } from '@/helpers/addressUtils';
+import StandardSlotButton from '@/components/Buttons/StandardSlotButton';
+
 export default {
   components: {
     'access-wallet-button': AccessWalletButton,
@@ -107,7 +140,8 @@ export default {
     'verify-details-modal': VerifyDetailsModal,
     'import-mnemonic-modal': ImportMnemonicModal,
     'generate-wallet-modal': GenerateWalletModal,
-    'network-address-modal': NetworkAndAddressModal
+    'network-address-modal': NetworkAndAddressModal,
+    'standard-slot-button': StandardSlotButton
   },
   data() {
     return {
@@ -169,7 +203,15 @@ export default {
       selectedAccountPath: '',
       selectedAddress: '',
       accCount: 0,
-      ethPrice: 0
+      ethPrice: 0,
+      addWalletButton: {
+        buttonStyle: 'green',
+        fullWidth: true
+      },
+      addWatchOnlyAddressButton: {
+        buttonStyle: 'green',
+        fullWidth: true
+      }
     };
   },
   computed: {
