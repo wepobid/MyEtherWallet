@@ -1,6 +1,7 @@
 <template>
   <div class="aave-container">
     <div class="header-container">
+      <p>{{ UsdPriceEth }}</p>
       <div v-if="$route.fullPath === '/interface/dapps/aave/action'">
         <div class="action-title">
           {{ actionTitle }} {{ reservesData.length > 0 ? token.name : '' }}
@@ -91,7 +92,10 @@ import { Toast } from '@/helpers';
 import {formatUserSummaryData } from '@aave/protocol-js';
 import axios from 'axios';
 import graphql from './graphql'
-import { getApolloClient } from './apollo.js';
+import getApolloClient from './apollo.js';
+import Vue from 'vue';
+import VueApollo from 'vue-apollo';
+import gql from 'graphql-tag';
 
 export default {
   components: {
@@ -115,7 +119,8 @@ export default {
       reserveAddr: 0,
       currentReserveBalance: '0',
       token: {},
-      actionType: ''
+      actionType: '',
+      UsdPriceEth: ''
     };
   },
   computed: {
@@ -131,8 +136,10 @@ export default {
         : this.$t('dappsAave.repay');
     }
   },
-
   watch: {
+    UsdPriceEth(newVal) {
+      console.error('newval', newVal)
+    },
     '$route.params.token'(newVal) {
       this.token = newVal;
       if (this.token && this.activeBorrowTab) {
@@ -147,39 +154,36 @@ export default {
     }
   },
   async mounted() {
-    const res1 = await graphql.useUserPositionUpdateSubscriptionSubscription(this.account.address);
-    const res2 = await graphql.useReserveUpdateSubscriptionSubscription();
-    const res3 = await graphql.getEthUsdPrice();
-    // console.log(res1); // todo remove dev item
-    // console.log(res2); // todo remove dev item
-    // console.log(res3); // todo remove dev item
-    // const summary = computeUserSummaryData(res2, res1, "abc", res3, Date.now());
-    // console.log(summary); // todo remove dev item
-    // const summary = formatUserSummaryData(res2, res1, "abc", res3, Date.now()) 
-    // ========= summary stuff end ==================
-    this.lendingPoolContractAddress =
-      '0x24a42fD28C976A61Df5D00D0599C34c4f90748c8';
-    this.lendingPoolAddressesProviderContract = new this.web3.eth.Contract(
-      LendingPoolAddressesProviderAbi,
-      this.lendingPoolContractAddress
-    );
-    this.lendingPool = await this.lendingPoolAddressesProviderContract.methods
-      .getLendingPool()
-      .call();
-    this.lendingPoolContract = new this.web3.eth.Contract(
-      LendingPoolAbi,
-      this.lendingPool
-    );
+    const apollo = getApolloClient();
 
-    this.getUserInfo();
-    this.getReserves();
-    this.callApollo();
+    Vue.use(VueApollo, {
+      apollo
+    });
+    console.error('in here')
+    // const testQuery = gql`
+    //   query ConnectionStatus {
+    //     isDisconnected @client
+    //   }
+    // `;
+    // apoolo.query ConnectionStatus {
+
+    // }
+    // console.error("apoolllo", this.$apollo)
   },
+  // apollo: {
+  //   UsdPriceEth() {
+  //     return {
+  //       query: gql`
+  //         query UsdPriceEth {
+  //           priceOracle(id: "1") {
+  //             usdPriceEth
+  //           }
+  //         }
+  //       `
+  //     };
+  //   }
+  // },
   methods: {
-    callApollo() {
-      const apollo = new getApolloClient()
-      console.error('summary', apollo)
-    },
     async getUserInfo() {
       try {
         const info = await this.lendingPoolContract.methods
