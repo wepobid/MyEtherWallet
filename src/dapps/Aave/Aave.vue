@@ -1,7 +1,7 @@
 <template>
   <div class="aave-container">
     <div class="header-container">
-      <p>{{ UsdPriceEth }}</p>
+      <p>{{ UserReserve }}</p>
       <div v-if="$route.fullPath === '/interface/dapps/aave/action'">
         <div class="action-title">
           {{ actionTitle }} {{ reservesData.length > 0 ? token.name : '' }}
@@ -120,7 +120,7 @@ export default {
       currentReserveBalance: '0',
       token: {},
       actionType: '',
-      UsdPriceEth: ''
+      UserReserve: {}
     };
   },
   computed: {
@@ -137,9 +137,6 @@ export default {
     }
   },
   watch: {
-    UsdPriceEth(newVal) {
-      console.error('newval', newVal)
-    },
     '$route.params.token'(newVal) {
       this.token = newVal;
       if (this.token && this.activeBorrowTab) {
@@ -159,30 +156,15 @@ export default {
     Vue.use(VueApollo, {
       apollo
     });
-    console.error('in here')
-    // const testQuery = gql`
-    //   query ConnectionStatus {
-    //     isDisconnected @client
-    //   }
-    // `;
-    // apoolo.query ConnectionStatus {
-
-    // }
-    // console.error("apoolllo", this.$apollo)
+    console.error('in here', apollo)
   },
-  // apollo: {
-  //   UsdPriceEth() {
-  //     return {
-  //       query: gql`
-  //         query UsdPriceEth {
-  //           priceOracle(id: "1") {
-  //             usdPriceEth
-  //           }
-  //         }
-  //       `
-  //     };
-  //   }
-  // },
+  apollo: {
+    UserReserve: gql`
+      query {
+        UserReserve
+      }
+    `
+  },
   methods: {
     async getUserInfo() {
       try {
